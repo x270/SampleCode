@@ -1,0 +1,122 @@
+<html>
+<head>
+<meta http-equiv="origin-trial" content="Get_Chrome_Origin_Trials">
+<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>Web NFC Test</title>
+</head>
+<body>
+<h1>Web NFC Test</h1>
+
+<button id="scanButton">Scan</button>
+<button id="writeButton">Write</button>
+<script>
+  var ChromeSamples = {
+    log: function() {
+      var line = Array.prototype.slice.call(arguments).map(function(argument) {
+        return typeof argument === 'string' ? argument : JSON.stringify(argument);
+      }).join(' ');
+
+      document.querySelector('#log').textContent += line + '\n';
+    },
+
+    clearLog: function() {
+      document.querySelector('#log').textContent = '';
+    },
+
+    setStatus: function(status) {
+      document.querySelector('#status').textContent = status;
+    },
+
+    setContent: function(newContent) {
+      var content = document.querySelector('#content');
+      while(content.hasChildNodes()) {
+        content.removeChild(content.lastChild);
+      }
+      content.appendChild(newContent);
+    }
+  };
+</script>
+
+<h1>Live Output</h1>
+<div id="output" class="output" style="background-color:#dddddd">
+  <div id="content"></div>
+  <div id="status"></div>
+  <pre id="log"></pre>
+</div>
+
+<script>
+  if (/Chrome\/(\d+\.\d+.\d+.\d+)/.test(navigator.userAgent)){
+    // Let's log a warning if the sample is not supposed to execute on this
+    // version of Chrome.
+    if (81 > parseInt(RegExp.$1)) {
+      ChromeSamples.setStatus('Warning! Keep in mind this sample has been tested with Chrome ' + 81 + '.');
+    }
+  }
+</script>
+
+<script>
+log = ChromeSamples.log;
+
+if (!("NDEFReader" in window))
+  ChromeSamples.setStatus(
+    "Web NFC is not available.\n" +
+      'Please make sure the "Experimental Web Platform features" flag is enabled on Android.'
+  );
+</script>
+
+<script>
+// Scan
+scanButton.addEventListener("click", async () => {
+  log("Taped Scan button");
+
+  try {
+    const reader = new NDEFReader();
+    await reader.scan();
+    log("> Scan started");
+
+    reader.addEventListener("error", function(e) {
+      log(`> Error has occured.`);
+      log(`> Error: ${e.message}`);
+    });
+
+    reader.addEventListener("reading", ({ message, serialNumber }) => {
+      log(`> Serial Number: ${serialNumber}`);
+      log(`> Records: (${message.records.length})`);
+      if (message.records.length === 1) {
+        switch (message.records[0].recordType) {
+          case "text":
+            const textDecoder = new TextDecoder(message.records[0].encoding);
+            log(`> data: (${textDecoder.decode(message.records[0].data)})`);
+            break;
+          case "url":
+            const decoder = new TextDecoder();
+            log(`> data: (${decoder.decode(message.records[0].data)})`);
+            break;
+          default:
+            log(`> data: (${message.records[0].data})`);            
+        }
+      }
+    });
+  } catch (error) {
+    log("> Error: " + error);
+  }
+});
+
+// Write
+writeButton.addEventListener("click", async () => {
+  log("User clicked write button");
+  try {
+    const writer = new NDEFWriter();
+    await writer.write({
+      records: [{ recordType: "text", data: 'Hello World' }]
+    });
+    log("> Message written");
+  } catch (error) {
+    log("> Error:" + error);
+  }
+});
+</script>
+    
+</body>
+</html>
