@@ -1,9 +1,16 @@
 # Testing `Web NFC` on Google Chrome.
 
+## Note
 - Works only with NFC-enabled Android SmartPhone.
 - Works only with Google Chrome 81 and above.
-- Must register for `the origin trial` as of this writing
+- Must register for `the origin trial` as of this writing.
 
+## Environment 
+- Samsung Galaxy S10
+- SONY Xperia SmartTags NT1
+- Google Chrome 81 for Android
+
+## Reference  
 Chrome Origin Trials  
 https://developers.chrome.com/origintrials/#/trials/my
 
