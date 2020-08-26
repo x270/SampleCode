@@ -8,7 +8,7 @@
 ## Environment 
 - Samsung Galaxy S10
 - SONY Xperia SmartTags NT1
-- Google Chrome 81 for Android
+- Google Chrome 81 beta for Android
 
 ## Reference  
 Chrome Origin Trials  
